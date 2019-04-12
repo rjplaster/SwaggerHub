@@ -1,0 +1,53 @@
+<div class="main-content">
+  <h2><a name=""></a></h2>
+  <p>This is the  API</p>
+
+  <h2><a name="findElectionsSummary"></a>findElectionsSummary</h2>
+  <hr>
+  <p></p>
+  <p>Returns a summary of all the Group benefits of which the Individual is enrolled, including the benefits the Individual has elected to opt out of coverage. * The Individual, specified by Cid, may represent an Employee or Dependent of an Employee.  * If the Cid represents an active or retired Employee, this operation returns ALL the Employees Group benefits covered options.   * If the Cid represents a Dependent, this operation returns only the Dependents Group benefits covered options.    * If the Cid represents an Individual that is both an Employee AND a Dependent, this operation returns ALL the Group benefits covered options as an Employee and a Dependent. * If the SubgroupId(s) are provided then a summary is restricted to those SubgroupId(s) provided. * If NO SubgroupIds are provided the operation returns Group benefits for that employee across ALL Subgroups in which the Individual participates. * If the Cid represents a Dual Employee, this operation returns ALL the Group benefits for which the Individual is enrolled under two or more different cooperative subgroups. </p>
+  <h3 class="section">URL</h3>
+  <code>http://sva.services.benefitsworkstation.nreca.org/Employee/FindElectionsSummary</code>
+  <h3 class="section">HTTP Method</h3>
+  <code>POST</code>
+  <h3 class="section">Response Type</h3>
+  <div class="model" data-model="FindParticipantsResponse"><a href="">FindParticipantsResponse</a></div>
+  <h3 class="section">Parameters</h3>
+  <ul>
+	  <li class="parameter">
+      
+      
+      
+      
+      <span class="param-in">Body: </span>
+      <span class="param-name">body</span>
+      <span class="param-type"></span>
+      
+      <p class="param-description">JSON object containing standard COF Message Request Header and operation specific request body</p>
+	  </li>
+  </ul>
+  <h2><a name="findParticipants"></a>findParticipants</h2>
+  <hr>
+  <p></p>
+  <p>Search for Participants in the provided Subgroups and using the specified input search criteria. Participants may be Employees, or COBRA Dependents </p>
+  <h3 class="section">URL</h3>
+  <code>http://sva.services.benefitsworkstation.nreca.org/Employee/FindParticipants</code>
+  <h3 class="section">HTTP Method</h3>
+  <code>POST</code>
+  <h3 class="section">Response Type</h3>
+  <div class="model" data-model="FindParticipantsResponse"><a href="">FindParticipantsResponse</a></div>
+  <h3 class="section">Parameters</h3>
+  <ul>
+	  <li class="parameter">
+      
+      
+      
+      
+      <span class="param-in">Body: </span>
+      <span class="param-name">body</span>
+      <span class="param-type"></span>
+      
+      <p class="param-description">Find Participants by SubgroupId(s)</p>
+	  </li>
+  </ul>
+</div>

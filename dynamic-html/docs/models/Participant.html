@@ -1,0 +1,61 @@
+
+<h2>Participant</h2>
+<ul class="parameter">
+  <li class="param-required-true">Cid : String
+    <br/>Participant&#x27;s Correlation Id (CID).  Unique identifier for an NRECA Individual used to identify and correlate the Individual&#x27;s identity across systems that may utilize differing keys or methods to identify individuals.  The format is a 9 character alphanumeric string value.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">SubgroupId : String
+    <br/>The cooperative subgroup of which this Individual is a member.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">FirstName : String
+    <br/>A given name or the name that occurs first in a given name.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">LastName : String
+    <br/>The name used to identify the members of a family.
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">Ssn : String
+    <br/>Participant&#x27;s Social Security Number (SSN).
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-true">DateOfBirth : Date
+    <br/>Participant&#x27;s Date of Birth (DOB).
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">ParticipantStatusCode : String
+    <br/>A list of Participant search status codes that are used to search for Participants. When NULL is provided, ALL Participant search statuses will be searched. * &#x60;A&#x60;  Active * &#x60;D&#x60;  Disabled * &#x60;L&#x60;  Leave * &#x60;TM&#x60; Terminated * &#x60;RT&#x60; Retired * &#x60;X&#x60;  Deceased * &#x60;CB&#x60;  COBRA (includes Non-Employees)
+      <dl class="param-enum">
+        <dt>Enum:
+            <dd>A</dd>
+            <dd>D</dd>
+            <dd>L</dd>
+            <dd>TM</dd>
+            <dd>RT</dd>
+            <dd>X</dd>
+            <dd>CB</dd>
+        </dt>
+      </dl>
+  </li>
+</ul>
+<ul class="parameter">
+  <li class="param-required-false">MaritalStatusCode : String
+    <br/>Code representing the state of being married. * &#x60;S&#x60; Single * &#x60;D&#x60; Divorced * &#x60;M&#x60; Married * &#x60;W&#x60; Widow 
+      <dl class="param-enum">
+        <dt>Enum:
+            <dd>D</dd>
+            <dd>M</dd>
+            <dd>S</dd>
+            <dd>W</dd>
+        </dt>
+      </dl>
+  </li>
+</ul>
