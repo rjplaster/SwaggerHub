@@ -1,0 +1,311 @@
+openapi: 3.0.0
+info:
+  title: BenefitsWorkstation GroupBenefitsApi Services
+  description: |-
+    <table style="float: left;"> <tbody>
+      <tr>
+        <td colspan="2">
+        <h3><strong>Overview:</strong></h3>
+        <p>Collection of Operations for accessing the Group Benefits Platform - Benefits Workstation.</p>
+        <h3><strong>Implementation Notes:</strong></h3>
+        <ul>
+          <li>Wherever possible REGEX expressions are provided to assist in validation</li>
+          </li>
+        </ul>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+        <h3><strong>Authentication:</strong></h3>
+        <ul>
+          <li>API is secured through Basic Auth scheme utilizing Windows NTLM users/groups</li>
+        </td>
+      </tr>
+    </tbody> </table>
+  contact:
+    name: BW Application Support
+    email: bwappsupport@nreca.org
+  version: 1.0.0
+externalDocs:
+  description: Find out more
+  url: http://nrecanow.nreca.org/sites/benefitsworkstation/BWWiki/GroupBenefitsApi%20Service%20Reference.aspx
+servers:
+- url: http://sva.services.benefitsworkstation.nreca.org
+- url: http://svb.services.benefitsworkstation.nreca.org
+- url: http://svc.services.benefitsworkstation.nreca.org
+tags:
+- name: Employee
+  description: Employee Service Operations
+  externalDocs:
+    description: Find out more
+    url: http://itwiki.nreca.org/display/NAS/GroupBenefitsApi.Employee
+- name: Organization
+  description: Organization Service Operations
+  externalDocs:
+    description: Find out more
+    url: http://itwiki.nreca.org/display/NAS/GroupBenefitsApi.Organization
+paths:
+  /Employee/FindParticipants:
+    post:
+      tags:
+      - Employee
+      summary: Returns list of employees for provided list of subgroups
+      description: |
+        Search for Participants in the provided Subgroups and using the specified input search criteria. Participants may be Employees, or COBRA Dependents
+      operationId: FindParticipants
+      requestBody:
+        description: Find Participants by SubgroupId(s)
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindParticipantsRequest'
+        required: true
+      responses:
+        200.1:
+          description: Successful operation, a collection of one or more participants meeting the search criteria is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindParticipantsResponse'
+        200.2:
+          description: "Participants Not Found\n* `Precondition`\n  NO Participants\
+            \ exist for the combination of the provided input search criteria.\n*\
+            \ `Postcondition` \n  ResponseMessage.Body is NULL.\n  \n"
+        400.1:
+          description: "Subgroup Limit Exceeded\n* `Precondition` \n  The number of\
+            \ provided SubgroupIds exceeds the configurable limit. \n* `Postcondition`\
+            \ \n  ResponseMessage.Body is NULL, AND in MessageResponseHeader.MessageResponse,\
+            \ a MessageToken Key Value pair is returned defining the configurable\
+            \ limit. The MessageToken.Key is set to “Limit”, AND MessageToken.Value\
+            \ is set to the value of the configurable limit.\n"
+          content:
+            application/json:
+              schema:
+                $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/schemas/Error
+              example:
+                MessageResponse:
+                  ReturnCode: 400
+                  ReasonCode: 1
+                  ShortDescription: Subgroup Limit Exceeded
+                  OperationId: FindParticipants
+                  MessageTokens:
+                    TokenType: FailureObjects
+                    TokenKeyValue:
+                      key: Limit
+                      value: 17
+        400.101:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/RequiredElementNotFound
+        401.1:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/WindowsAuthenticationFailed
+        401.2:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/WindowsAuthorizationFailed
+        500.100:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/SystemFailure
+      security:
+      - basicAuth: []
+  /Employee/FindElectionsSummary:
+    post:
+      tags:
+      - Employee
+      summary: Return a summary of all the Group benefits of which the Individual is enrolled, including the benefits the Individual has elected to opt out of coverage.
+      description: "Returns a summary of all the Group benefits of which the Individual\
+        \ is enrolled, including the benefits the Individual has elected to opt out\
+        \ of coverage.\n* The Individual, specified by Cid, may represent an Employee\
+        \ or Dependent of an Employee. \n* If the Cid represents an active or retired\
+        \ Employee, this operation returns ALL the Employees Group benefits covered\
+        \ options.  \n* If the Cid represents a Dependent, this operation returns\
+        \ only the Dependents Group benefits covered options.   \n* If the Cid represents\
+        \ an Individual that is both an Employee AND a Dependent, this operation returns\
+        \ ALL the Group benefits covered options as an Employee and a Dependent.\n\
+        * If the SubgroupId(s) are provided then a summary is restricted to those\
+        \ SubgroupId(s) provided.\n* If NO SubgroupIds are provided the operation\
+        \ returns Group benefits for that employee across ALL Subgroups in which the\
+        \ Individual participates.\n* If the Cid represents a Dual Employee, this\
+        \ operation returns ALL the Group benefits for which the Individual is enrolled\
+        \ under two or more different cooperative subgroups. "
+      operationId: FindElectionsSummary
+      requestBody:
+        description: JSON object containing standard COF Message Request Header and operation specific request body
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindParticipantsRequest'
+        required: true
+      responses:
+        200.1:
+          description: Successful operation, Elections Summary collection for the participant is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindParticipantsResponse'
+        200.2:
+          description: "Elections Not Found\n* `Precondition`\n  Elections do NOT\
+            \ exist for the Individual (Employee, or Dependent) with the provided\
+            \ Identifier AND provided SubgroupId(s).\n* `Postcondition` \n  ResponseMessage.Body\
+            \ is NULL.\n  \n"
+        400.1:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/SubgroupLimitExceeded
+        400.101:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/RequiredElementNotFound
+        401.508:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/WindowsAuthenticationFailed
+        401.502:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/WindowsAuthorizationFailed
+        500.100:
+          $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/responses/SystemFailure
+      security:
+      - basicAuth: []
+components:
+  schemas:
+    FindParticipantsRequest:
+      allOf:
+      - $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/schemas/COFRequest
+      - type: object
+        properties:
+          Body:
+            type: object
+            properties:
+              Criteria:
+                $ref: '#/components/schemas/ParticipantSearchCriteria'
+    ParticipantSearchCriteria:
+      type: object
+      properties:
+        SubgroupIds:
+          type: array
+          example:
+          - "0107001001"
+          - "0107005001"
+          items:
+            type: string
+      description: Search criteria to find Participants across one or more subgroups.
+    FindParticipantsResponse:
+      type: object
+      properties:
+        MessageResponseHeader:
+          allOf:
+          - $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/schemas/MessageResponseHeader
+        Body:
+          type: object
+          properties:
+            ParticipantSearchResults:
+              type: array
+              description: Search criteria to find Participants across one or more subgroups.
+              items:
+                type: object
+                properties:
+                  Participants:
+                    $ref: '#/components/schemas/Participant'
+    Participant:
+      required:
+      - Cid
+      - DateOfBirth
+      - FirstName
+      - LastName
+      - Ssn
+      - SubgroupId
+      type: object
+      properties:
+        Cid:
+          type: string
+          description: Participant's Correlation Id (CID).  Unique identifier for an NRECA Individual used to identify and correlate the Individual's identity across systems that may utilize differing keys or methods to identify individuals.  The format is a 9 character alphanumeric string value.
+          example: DSRE40FTG
+        SubgroupId:
+          type: string
+          description: The cooperative subgroup of which this Individual is a member.
+          example: "0107001001"
+        FirstName:
+          type: string
+          description: A given name or the name that occurs first in a given name.
+          example: Willie
+        LastName:
+          type: string
+          description: The name used to identify the members of a family.
+          example: Wirehand
+        Ssn:
+          type: string
+          description: Participant's Social Security Number (SSN).
+          example: "103457998"
+        DateOfBirth:
+          type: string
+          description: Participant's Date of Birth (DOB).
+          format: date-time
+        ParticipantStatusCode:
+          type: string
+          description: |-
+            A list of Participant search status codes that are used to search for Participants. When NULL is provided, ALL Participant search statuses will be searched.
+            * `A`  Active
+            * `D`  Disabled
+            * `L`  Leave
+            * `TM` Terminated
+            * `RT` Retired
+            * `X`  Deceased
+            * `CB`  COBRA (includes Non-Employees)
+          example: A
+          enum:
+          - A
+          - D
+          - L
+          - TM
+          - RT
+          - X
+          - CB
+        MaritalStatusCode:
+          type: string
+          description: |
+            Code representing the state of being married.
+            * `S` Single
+            * `D` Divorced
+            * `M` Married
+            * `W` Widow
+          example: M
+          enum:
+          - D
+          - M
+          - S
+          - W
+      description: |
+        Individual participant that meets search criteria.
+      example:
+      - Cid: FD8RT547
+        FirstName: Willie
+        LastName: Wirehand
+        Ssn: 224764532
+        DateOfBirth: 1973-06-27T00:00:00
+        ParticipantStatusCode: A
+        MaritalStatusCode: M
+      - Cid: 8754KL2G2
+        FirstName: Jonas
+        LastName: Jameson
+        Ssn: 567908234
+        DateOfBirth: 1965-06-27T00:00:00
+        ParticipantStatusCode: TM
+        MaritalStatusCode: S
+  responses:
+    NotFound:
+      description: Entity not found.
+    SubgroupLimitExceeded:
+      description: "Subgroup Limit Exceeded\n* `Precondition` \n  The number of provided\
+        \ SubgroupIds exceeds the configurable limit. \n* `Postcondition` \n  ResponseMessage.Body\
+        \ is NULL, AND in MessageResponseHeader.MessageResponse, a MessageToken Key\
+        \ Value pair is returned defining the configurable limit. The MessageToken.Key\
+        \ is set to “Limit”, AND MessageToken.Value is set to the value of the configurable\
+        \ limit.\n"
+      content:
+        application/json:
+          schema:
+            $ref: http://swaggerhub.nreca.org/v1/domains/EAP/COF/4.9.7#/components/schemas/Error
+          example:
+            MessageResponse:
+              ReturnCode: 400
+              ReasonCode: 1
+              ShortDescription: Subgroup Limit Exceeded
+              OperationId: FindParticipants
+              MessageTokens:
+                TokenType: FailureObjects
+                TokenKeyValue:
+                  key: Limit
+                  value: 17
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
